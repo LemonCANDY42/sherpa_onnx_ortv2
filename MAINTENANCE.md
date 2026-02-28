@@ -44,6 +44,19 @@ Recommended remote:
 4. Run verify workflow and smoke tests.
 5. Trigger release workflow after manual review.
 
+## Host App Integration Checklist
+
+For any upstream update (`sherpa_onnx` or `onnxruntime_v2` related):
+
+1. Ensure compat matrix has the target pair marked as releasable.
+2. Ensure Android/iOS native binaries are aligned with the target upstream tag.
+3. Ensure `provider=auto` policy and CPU fallback tests still pass.
+4. Publish/push new commit in this repository.
+5. In host app repository, move submodule pointer to that commit and run:
+   - `flutter pub get`
+   - `flutter analyze`
+   - policy/config tests from `packages/sherpa_onnx_ortv2/test/`
+
 ## Known Remaining Work
 
 - Full auto rebuild of Android/iOS native binaries per upstream tag.
