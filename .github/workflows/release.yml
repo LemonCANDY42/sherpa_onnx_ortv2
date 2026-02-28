@@ -6,7 +6,7 @@ on:
       sherpa_tag:
         description: "Upstream sherpa_onnx version"
         required: true
-        default: "1.12.28"
+        default: "1.12.27"
       ort_version:
         description: "Target ONNX Runtime line"
         required: true

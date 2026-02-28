@@ -1,12 +1,20 @@
-# sherpa_onnx_ortv2 (Standalone Repo Layout)
+# sherpa_onnx_ortv2
 
-This repository contains the public standalone `sherpa_onnx_ortv2` fork.
+`sherpa_onnx_ortv2` is a compatibility-first Flutter fork of `sherpa_onnx`,
+focused on Android/iOS ONNX Runtime unification with `onnxruntime_v2`.
 
 ## Goals
 
-- Keep package development and release independent from any host application repository.
-- Provide Android/iOS ONNX Runtime unification.
-- Provide `provider=auto` with safe fallback behavior.
+- Keep development and release independent from any host application repository.
+- Keep Dart API behavior aligned with upstream `sherpa_onnx` as much as possible.
+- Unify Android/iOS ONNX Runtime version lines for coexistence with `onnxruntime_v2`.
+- Provide `provider=auto` with deterministic priority and safe CPU fallback.
+
+## Related repositories
+
+- Upstream `sherpa_onnx`: https://github.com/k2-fsa/sherpa-onnx
+- ONNX Runtime: https://github.com/microsoft/onnxruntime
+- `onnxruntime_v2` package: https://pub.dev/packages/onnxruntime_v2
 
 ## Repository layout
 

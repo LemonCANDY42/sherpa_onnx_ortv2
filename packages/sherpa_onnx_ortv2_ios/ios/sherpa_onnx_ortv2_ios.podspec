@@ -7,7 +7,7 @@
 # https://groups.google.com/g/dart-ffi/c/nUATMBy7r0c
 Pod::Spec.new do |s|
   s.name             = 'sherpa_onnx_ortv2_ios'
-  s.version          = '1.12.25-ortv2.0'
+  s.version          = '1.12.27-ortv2.0'
   s.summary          = 'Flutter FFI iOS plugin for sherpa_onnx_ortv2 runtime binaries.'
   s.description      = <<-DESC
 Flutter FFI iOS plugin package for sherpa_onnx_ortv2.

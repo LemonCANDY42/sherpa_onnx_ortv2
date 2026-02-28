@@ -1,3 +1,9 @@
+## 1.12.27-ortv2.0
+
+- Rebased compatibility target to upstream `sherpa_onnx` `1.12.27`.
+- Added PocketTTS `voiceEmbeddingCacheCapacity` support in Dart/FFI config.
+- Updated release-check defaults and compatibility matrix to `1.12.27`.
+
 ## 1.12.25-ortv2.0
 
 - Initial public ORTv2 fork release with provider auto-selection and CI guardrails.

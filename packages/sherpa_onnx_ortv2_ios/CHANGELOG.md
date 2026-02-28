@@ -1,3 +1,8 @@
+## 1.12.27-ortv2.0
+
+- Bumped iOS plugin version/podspec to align with upstream `sherpa_onnx` `1.12.27`.
+- Kept iOS package line consistent with the ORTv2 fork release cadence.
+
 ## 1.12.25-ortv2.0
 
 - Initial public ORTv2 fork release with provider auto-selection and CI guardrails.
