@@ -16,7 +16,7 @@ Recommended remote:
 ## CI and Workflows
 
 - Verify: `.github/workflows/verify.yml`
-- Release: `.github/workflows/release.yml`
+- Release check and source artifact: `.github/workflows/release.yml`
 - Upstream source sync: `.github/workflows/upstream-sync.yml`
 - Upstream drift monitor: `.github/workflows/upstream-monitor.yml`
 
@@ -34,7 +34,7 @@ Recommended remote:
 - Must pass before publish:
   - `verify.yml`
   - `dart pub publish --dry-run` for all 3 packages
-- Real publish uses `release.yml` and requires `PUB_DEV_TOKEN` secret.
+- Current delivery mode: GitHub repository / submodule / git dependency (pub.dev publish disabled for now).
 
 ## Continuous Maintenance Flow
 
@@ -49,4 +49,5 @@ Recommended remote:
 - Full auto rebuild of Android/iOS native binaries per upstream tag.
 - Broader device-matrix stability tests (hardware EP coverage).
 - End-to-end automated iOS ORT rebuild-level verification.
+
 

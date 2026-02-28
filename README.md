@@ -35,9 +35,10 @@ Then point Flutter `pubspec.yaml` path dependencies to:
 - CI verification: `verify.yml`
 - Upstream sync helper: `upstream-sync.yml`
 - Upstream drift monitor: `upstream-monitor.yml`
-- Manual publish to pub.dev: `release.yml` with `PUB_DEV_TOKEN`
+- Release check + source artifact build: `release.yml`
 - Maintenance guide: `MAINTENANCE.md`
 
 Version format:
 
 - `<upstream_version>-ortv2.<n>`
+
