@@ -10,6 +10,9 @@
 - 提供 `provider=auto` 自动后端选择
 - 在自动选择失败时稳定回退到 CPU
 
+建议远端仓库地址：
+`https://github.com/LemonCANDY42/sherpa_onnx_ortv2.git`
+
 ## CI / Workflow
 
 - 验证：`.github/workflows/verify.yml`
