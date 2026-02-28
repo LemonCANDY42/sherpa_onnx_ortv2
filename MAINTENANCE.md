@@ -29,6 +29,10 @@ Recommended remote:
 - Android sherpa symbol guard: `tool/check-android-sherpa-symbol-version.ps1`
 - iOS linkage guard: `tool/check-ios-linkage.ps1`
 - Upstream drift detector: `tool/detect-upstream-drift.ps1`
+- Native toolchain preflight: `tool/check-native-toolchain.sh`
+- Native toolchain bootstrap:
+  - `tool/provision-toolchain-ubuntu.sh`
+  - `tool/provision-toolchain-macos.sh`
 
 ## Release Rules
 
@@ -42,10 +46,11 @@ Recommended remote:
 
 1. Monitor upstream drift (`upstream-monitor.yml` schedule).
 2. Run `upstream-sync.yml` to sync upstream source.
-3. Run `native-rebuild.yml` for the same sherpa/ORT version pair.
-4. Re-apply ORTv2-specific patches if upstream touched relevant files.
-5. Run verify workflow and smoke tests.
-6. Trigger release workflow after manual review.
+3. Ensure toolchain readiness (`check-native-toolchain.sh`) or run provision scripts on local runners.
+4. Run `native-rebuild.yml` for the same sherpa/ORT version pair.
+5. Re-apply ORTv2-specific patches if upstream touched relevant files.
+6. Run verify workflow and smoke tests.
+7. Trigger release workflow after manual review.
 
 ## Host App Integration Checklist
 

@@ -66,6 +66,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Provision Linux toolchain
+        run: |
+          chmod +x packages/sherpa_onnx_ortv2/tool/provision-toolchain-ubuntu.sh
+          packages/sherpa_onnx_ortv2/tool/provision-toolchain-ubuntu.sh
+
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
@@ -74,6 +79,11 @@ jobs:
           yes | sdkmanager --licenses >/dev/null
           sdkmanager "ndk;29.0.14206865"
           echo "ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/29.0.14206865" >> "$GITHUB_ENV"
+
+      - name: Check Android native toolchain
+        run: |
+          chmod +x packages/sherpa_onnx_ortv2/tool/check-native-toolchain.sh
+          packages/sherpa_onnx_ortv2/tool/check-native-toolchain.sh android
 
       - name: Rebuild Android native binaries
         run: |
@@ -97,6 +107,16 @@ jobs:
         shell: bash
     steps:
       - uses: actions/checkout@v4
+
+      - name: Provision macOS toolchain
+        run: |
+          chmod +x packages/sherpa_onnx_ortv2/tool/provision-toolchain-macos.sh
+          packages/sherpa_onnx_ortv2/tool/provision-toolchain-macos.sh
+
+      - name: Check iOS native toolchain
+        run: |
+          chmod +x packages/sherpa_onnx_ortv2/tool/check-native-toolchain.sh
+          packages/sherpa_onnx_ortv2/tool/check-native-toolchain.sh ios
 
       - name: Rebuild iOS xcframework
         run: |

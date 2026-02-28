@@ -64,3 +64,14 @@ Version format:
 
 By default it resolves the latest upstream versions from pub.dev, rebuilds on GitHub-hosted runners, and opens a PR with the refreshed binaries and compat-matrix update.
 
+## Toolchain bootstrap
+
+For local/native rebuild preparation:
+
+- Linux:
+  - `packages/sherpa_onnx_ortv2/tool/provision-toolchain-ubuntu.sh`
+- macOS:
+  - `packages/sherpa_onnx_ortv2/tool/provision-toolchain-macos.sh`
+- Preflight check:
+  - `packages/sherpa_onnx_ortv2/tool/check-native-toolchain.sh [android|ios|all]`
+
