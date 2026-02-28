@@ -47,7 +47,26 @@ final DynamicLibrary _dylib = () {
     }
   }
 
-  if (Platform.isAndroid || Platform.isLinux) {
+  if (Platform.isAndroid) {
+    // sherpa-onnx Android binaries reference ORT C symbols directly.
+    // Preload ORT so symbols (e.g. OrtGetApiBase) are resolvable before loading sherpa.
+    final prefix = _path == null ? '' : '$_path/';
+    for (final candidate in const ['libonnxruntime.so', 'libonnxruntime4j_jni.so']) {
+      try {
+        DynamicLibrary.open('$prefix$candidate');
+      } catch (_) {
+        // Try next candidate; final sherpa load error remains the source of truth.
+      }
+    }
+
+    if (_path == null) {
+      return DynamicLibrary.open('libsherpa-onnx-c-api.so');
+    } else {
+      return DynamicLibrary.open('$_path/libsherpa-onnx-c-api.so');
+    }
+  }
+
+  if (Platform.isLinux) {
     if (_path == null) {
       return DynamicLibrary.open('libsherpa-onnx-c-api.so');
     } else {

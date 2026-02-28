@@ -4,6 +4,8 @@
 - Synced Android JNI libs and iOS xcframework binaries to upstream `1.12.27`.
 - Added PocketTTS `voiceEmbeddingCacheCapacity` support in Dart/FFI config.
 - Updated release-check defaults and compatibility matrix to `1.12.27`.
+- Fixed Android runtime loading order by preloading ONNX Runtime shared libraries
+  before opening `libsherpa-onnx-c-api.so` (prevents `OrtGetApiBase` symbol errors).
 
 ## 1.12.25-ortv2.0
 
