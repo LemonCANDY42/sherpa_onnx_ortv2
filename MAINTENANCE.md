@@ -23,10 +23,10 @@ Recommended remote:
 ## Implemented Guardrails
 
 - Compatibility matrix: `packages/sherpa_onnx_ortv2/compat-matrix.yaml`
-- API export guard: `tools/check-public-api-exports.ps1`
-- Android ORT line guard: `tools/check-android-onnxruntime-version.ps1`
-- iOS linkage guard: `tools/check-ios-linkage.ps1`
-- Upstream drift detector: `tools/detect-upstream-drift.ps1`
+- API export guard: `tool/check-public-api-exports.ps1`
+- Android ORT line guard: `tool/check-android-onnxruntime-version.ps1`
+- iOS linkage guard: `tool/check-ios-linkage.ps1`
+- Upstream drift detector: `tool/detect-upstream-drift.ps1`
 
 ## Release Rules
 
@@ -49,3 +49,4 @@ Recommended remote:
 - Full auto rebuild of Android/iOS native binaries per upstream tag.
 - Broader device-matrix stability tests (hardware EP coverage).
 - End-to-end automated iOS ORT rebuild-level verification.
+

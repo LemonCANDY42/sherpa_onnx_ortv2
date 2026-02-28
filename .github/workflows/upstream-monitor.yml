@@ -16,4 +16,5 @@ jobs:
 
       - name: Detect upstream drift (sherpa_onnx / onnxruntime_v2)
         working-directory: packages/sherpa_onnx_ortv2
-        run: ./tools/detect-upstream-drift.ps1
+        run: ./tool/detect-upstream-drift.ps1
+

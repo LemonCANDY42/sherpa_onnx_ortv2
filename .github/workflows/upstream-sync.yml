@@ -53,12 +53,12 @@ jobs:
 
       - name: Sync upstream sources into fork packages
         working-directory: packages/sherpa_onnx_ortv2
-        run: ./tools/sync-from-upstream.ps1 -SherpaVersion "${{ steps.versions.outputs.sherpa_version }}"
+        run: ./tool/sync-from-upstream.ps1 -SherpaVersion "${{ steps.versions.outputs.sherpa_version }}"
 
       - name: Ensure compat matrix has target pair
         working-directory: packages/sherpa_onnx_ortv2
         run: >
-          ./tools/update-compat-matrix.ps1
+          ./tool/update-compat-matrix.ps1
           -SherpaTag "${{ steps.versions.outputs.sherpa_version }}"
           -OrtVersion "${{ steps.versions.outputs.ort_version }}"
 
@@ -78,3 +78,4 @@ jobs:
             Manual follow-up required:
             - Re-apply ORTv2 fork patches if upstream changed related files.
             - Re-run verify/release workflows before publishing.
+

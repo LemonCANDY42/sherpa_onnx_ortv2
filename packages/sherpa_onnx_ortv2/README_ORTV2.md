@@ -54,10 +54,11 @@ See `compat-matrix.yaml` for approved upstream/ORT combinations.
 
 ## Guard scripts
 
-- `tools/assert-compat-matrix.ps1`
-- `tools/check-public-api-exports.ps1`
-- `tools/check-android-onnxruntime-version.ps1`
-- `tools/check-ios-linkage.ps1`
-- `tools/detect-upstream-drift.ps1`
-- `tools/update-compat-matrix.ps1`
+- `tool/assert-compat-matrix.ps1`
+- `tool/check-public-api-exports.ps1`
+- `tool/check-android-onnxruntime-version.ps1`
+- `tool/check-ios-linkage.ps1`
+- `tool/detect-upstream-drift.ps1`
+- `tool/update-compat-matrix.ps1`
+
 

@@ -39,14 +39,14 @@ jobs:
       - name: Validate compat matrix
         working-directory: packages/sherpa_onnx_ortv2
         run: >
-          ./tools/assert-compat-matrix.ps1
+          ./tool/assert-compat-matrix.ps1
           -SherpaTag "${{ github.event.inputs.sherpa_tag }}"
           -OrtVersion "${{ github.event.inputs.ort_version }}"
 
       - name: API compatibility guard
         working-directory: packages/sherpa_onnx_ortv2
         run: >
-          ./tools/check-public-api-exports.ps1
+          ./tool/check-public-api-exports.ps1
           -UpstreamVersion "${{ github.event.inputs.sherpa_tag }}"
 
       - name: Publish dry-run (android)
@@ -104,3 +104,4 @@ jobs:
         run: |
           flutter pub get
           dart pub publish --force
+
