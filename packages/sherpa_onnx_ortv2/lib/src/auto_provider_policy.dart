@@ -10,6 +10,7 @@ class AutoProviderPolicy {
     this.iosPriority = const <String>['coreml', 'xnnpack', 'cpu'],
     this.defaultPriority = const <String>['xnnpack', 'cpu'],
     this.enableOnnxruntimeProbe = true,
+    this.allowOptimisticSelectionWithoutProbe = false,
     this.enableDiagnostics = true,
   });
 
@@ -17,6 +18,7 @@ class AutoProviderPolicy {
   final List<String> iosPriority;
   final List<String> defaultPriority;
   final bool enableOnnxruntimeProbe;
+  final bool allowOptimisticSelectionWithoutProbe;
   final bool enableDiagnostics;
 }
 
@@ -57,6 +59,7 @@ const Set<String> _sherpaSupportedProviders = <String>{
   'coreml',
   'xnnpack',
   'nnapi',
+  'qnn',
   'trt',
   'directml',
   'spacemit',
@@ -121,23 +124,29 @@ ProviderResolution _resolveAutoProvider({required String component}) {
       final result = ProviderResolution(
         requestedProvider: 'auto',
         resolvedProvider: 'cpu',
-        fallbackReason:
-            probeError == null ? 'fallback_cpu' : 'probe_unavailable',
+        fallbackReason: probeError != null
+            ? 'probe_unavailable_fallback_cpu'
+            : _autoProviderPolicy.enableOnnxruntimeProbe
+                ? 'fallback_cpu'
+                : 'probe_disabled_fallback_cpu',
       );
       _emitDiagnostics(result, component: component, probeError: probeError);
       return result;
     }
 
     if (availableProviders == null) {
-      final result = ProviderResolution(
-        requestedProvider: 'auto',
-        resolvedProvider: normalized,
-        fallbackReason: probeError == null
-            ? 'probe_disabled_or_unavailable'
-            : 'probe_unavailable',
-      );
-      _emitDiagnostics(result, component: component, probeError: probeError);
-      return result;
+      if (_autoProviderPolicy.allowOptimisticSelectionWithoutProbe) {
+        final result = ProviderResolution(
+          requestedProvider: 'auto',
+          resolvedProvider: normalized,
+          fallbackReason: probeError == null
+              ? 'probe_disabled_assume_available'
+              : 'probe_unavailable_assume_available',
+        );
+        _emitDiagnostics(result, component: component, probeError: probeError);
+        return result;
+      }
+      continue;
     }
 
     final expectedEp = _providerToOrtEp[normalized];
@@ -160,7 +169,11 @@ ProviderResolution _resolveAutoProvider({required String component}) {
   final result = ProviderResolution(
     requestedProvider: 'auto',
     resolvedProvider: 'cpu',
-    fallbackReason: 'no_accelerated_provider_available',
+    fallbackReason: probeError != null
+        ? 'probe_unavailable_fallback_cpu'
+        : _autoProviderPolicy.enableOnnxruntimeProbe
+            ? 'no_accelerated_provider_available'
+            : 'probe_disabled_fallback_cpu',
   );
   _emitDiagnostics(result, component: component, probeError: probeError);
   return result;

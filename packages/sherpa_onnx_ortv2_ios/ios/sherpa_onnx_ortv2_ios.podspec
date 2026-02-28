@@ -8,9 +8,9 @@
 Pod::Spec.new do |s|
   s.name             = 'sherpa_onnx_ortv2_ios'
   s.version          = '1.12.25-ortv2.0'
-  s.summary          = 'A new Flutter FFI plugin project.'
+  s.summary          = 'Flutter FFI iOS plugin for sherpa_onnx_ortv2 runtime binaries.'
   s.description      = <<-DESC
-A new Flutter FFI plugin project.
+Flutter FFI iOS plugin package for sherpa_onnx_ortv2.
                        DESC
   s.homepage         = 'https://github.com/sherpa-onnx-ortv2/sherpa_onnx_ortv2'
   s.license          = { :file => '../LICENSE' }

@@ -71,3 +71,15 @@ jobs:
       - name: Run auto provider tests
         working-directory: packages/sherpa_onnx_ortv2
         run: flutter test test/auto_provider_policy_test.dart
+
+  verify_ios_linkage:
+    runs-on: macos-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run iOS linkage guard
+        working-directory: packages/sherpa_onnx_ortv2
+        run: ./tools/check-ios-linkage.ps1

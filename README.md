@@ -22,19 +22,21 @@ This directory is the standalone repository layout for the public `sherpa_onnx_o
 In the SaySee repo root:
 
 ```bash
-git submodule add <PUBLIC_REPO_URL> app/saysee_client/submodules/sherpa_onnx_ortv2
+git submodule add <PUBLIC_REPO_URL> app/saysee_client/submodules/sherpa_onnx_ortv2_repo
 git submodule update --init --recursive
 ```
 
 SaySee `pubspec.yaml` should reference paths under:
-`submodules/sherpa_onnx_ortv2/packages/...`
+`submodules/sherpa_onnx_ortv2_repo/packages/...`
 
 ## Release model
 
 - CI verification: `verify.yml`
 - Upstream sync helper: `upstream-sync.yml`
 - Manual publish to pub.dev: `release.yml` with `PUB_DEV_TOKEN`
+- Maintenance guide: `MAINTENANCE.md`
 
 Version format:
 
 - `<upstream_version>-ortv2.<n>`
+
