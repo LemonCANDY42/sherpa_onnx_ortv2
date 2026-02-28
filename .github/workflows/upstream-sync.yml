@@ -4,9 +4,15 @@ on:
   workflow_dispatch:
     inputs:
       sherpa_version:
-        description: "sherpa_onnx version from pub.dev (e.g. 1.12.27)"
-        required: true
-        default: "1.12.27"
+        description: "sherpa_onnx version from pub.dev (e.g. 1.12.28)"
+        required: false
+        default: ""
+      ort_version:
+        description: "onnxruntime_v2 version line (e.g. 1.23.2)"
+        required: false
+        default: ""
+  schedule:
+    - cron: '30 3 * * 1'
 
 jobs:
   sync:
@@ -22,25 +28,53 @@ jobs:
         with:
           flutter-version: "3.38.6"
 
+      - name: Resolve target versions
+        id: versions
+        run: |
+          $sherpaInput = "${{ github.event.inputs.sherpa_version }}"
+          if ([string]::IsNullOrWhiteSpace($sherpaInput)) {
+            $sherpaInput = (Invoke-RestMethod -Uri 'https://pub.dev/api/packages/sherpa_onnx').latest.version
+          }
+
+          $ortInput = "${{ github.event.inputs.ort_version }}"
+          if ([string]::IsNullOrWhiteSpace($ortInput)) {
+            $ortFull = (Invoke-RestMethod -Uri 'https://pub.dev/api/packages/onnxruntime_v2').latest.version
+            $ortInput = ($ortFull -split '\+')[0]
+          }
+
+          "sherpa_version=$sherpaInput" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          "ort_version=$ortInput" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
       - name: Prime upstream package cache
         run: |
-          dart pub cache add sherpa_onnx --version "${{ github.event.inputs.sherpa_version }}"
-          dart pub cache add sherpa_onnx_android --version "${{ github.event.inputs.sherpa_version }}"
-          dart pub cache add sherpa_onnx_ios --version "${{ github.event.inputs.sherpa_version }}"
+          dart pub cache add sherpa_onnx --version "${{ steps.versions.outputs.sherpa_version }}"
+          dart pub cache add sherpa_onnx_android --version "${{ steps.versions.outputs.sherpa_version }}"
+          dart pub cache add sherpa_onnx_ios --version "${{ steps.versions.outputs.sherpa_version }}"
 
       - name: Sync upstream sources into fork packages
         working-directory: packages/sherpa_onnx_ortv2
-        run: ./tools/sync-from-upstream.ps1 -SherpaVersion "${{ github.event.inputs.sherpa_version }}"
+        run: ./tools/sync-from-upstream.ps1 -SherpaVersion "${{ steps.versions.outputs.sherpa_version }}"
+
+      - name: Ensure compat matrix has target pair
+        working-directory: packages/sherpa_onnx_ortv2
+        run: >
+          ./tools/update-compat-matrix.ps1
+          -SherpaTag "${{ steps.versions.outputs.sherpa_version }}"
+          -OrtVersion "${{ steps.versions.outputs.ort_version }}"
 
       - name: Create pull request with synced sources
         uses: peter-evans/create-pull-request@v6
         with:
-          branch: chore/upstream-sync-${{ github.event.inputs.sherpa_version }}
-          commit-message: "chore: sync upstream sherpa_onnx ${{ github.event.inputs.sherpa_version }}"
-          title: "chore: sync upstream sherpa_onnx ${{ github.event.inputs.sherpa_version }}"
+          branch: chore/upstream-sync-${{ steps.versions.outputs.sherpa_version }}
+          commit-message: "chore: sync upstream sherpa_onnx ${{ steps.versions.outputs.sherpa_version }}"
+          title: "chore: sync upstream sherpa_onnx ${{ steps.versions.outputs.sherpa_version }}"
           body: |
             Automated upstream source sync.
 
+            Target versions:
+            - sherpa_onnx: `${{ steps.versions.outputs.sherpa_version }}`
+            - onnxruntime_v2 line: `${{ steps.versions.outputs.ort_version }}`
+
             Manual follow-up required:
-            - Re-apply ORTv2 fork patches.
+            - Re-apply ORTv2 fork patches if upstream changed related files.
             - Re-run verify/release workflows before publishing.

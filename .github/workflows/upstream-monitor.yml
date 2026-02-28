@@ -1,0 +1,19 @@
+name: upstream-monitor
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * 1'
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect upstream drift (sherpa_onnx / onnxruntime_v2)
+        working-directory: packages/sherpa_onnx_ortv2
+        run: ./tools/detect-upstream-drift.ps1

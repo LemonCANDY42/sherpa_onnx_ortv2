@@ -1,12 +1,12 @@
 # sherpa_onnx_ortv2 (Standalone Repo Layout)
 
-This directory is the standalone repository layout for the public `sherpa_onnx_ortv2` fork.
+This repository contains the public standalone `sherpa_onnx_ortv2` fork.
 
 ## Goals
 
-- Keep package development/release fully independent from the private SaySee app repo.
-- Keep SaySee as a consumer only, via Git submodule pinning.
-- Support Android/iOS ONNX Runtime unification and `provider=auto` fallback behavior.
+- Keep package development and release independent from any host application repository.
+- Provide Android/iOS ONNX Runtime unification.
+- Provide `provider=auto` with safe fallback behavior.
 
 ## Repository layout
 
@@ -16,6 +16,7 @@ This directory is the standalone repository layout for the public `sherpa_onnx_o
 - `.github/workflows/verify.yml`
 - `.github/workflows/release.yml`
 - `.github/workflows/upstream-sync.yml`
+- `.github/workflows/upstream-monitor.yml`
 
 ## Consume from a host app repo (submodule)
 
@@ -29,17 +30,14 @@ git submodule update --init --recursive
 Then point Flutter `pubspec.yaml` path dependencies to:
 `<your-submodule-path>/packages/...`
 
-Example (SaySee):
-`app/saysee_client/submodules/sherpa_onnx_ortv2_repo/packages/...`
-
 ## Release model
 
 - CI verification: `verify.yml`
 - Upstream sync helper: `upstream-sync.yml`
+- Upstream drift monitor: `upstream-monitor.yml`
 - Manual publish to pub.dev: `release.yml` with `PUB_DEV_TOKEN`
 - Maintenance guide: `MAINTENANCE.md`
 
 Version format:
 
 - `<upstream_version>-ortv2.<n>`
-

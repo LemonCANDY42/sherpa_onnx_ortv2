@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
   s.description      = <<-DESC
 Flutter FFI iOS plugin package for sherpa_onnx_ortv2.
                        DESC
-  s.homepage         = 'https://github.com/sherpa-onnx-ortv2/sherpa_onnx_ortv2'
+  s.homepage         = 'https://github.com/LemonCANDY42/sherpa_onnx_ortv2'
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Fangjun Kuang' => 'csukuangfj@gmail.com' }
 
@@ -32,3 +32,4 @@ Flutter FFI iOS plugin package for sherpa_onnx_ortv2.
     }
   s.swift_version = '5.0'
 end
+

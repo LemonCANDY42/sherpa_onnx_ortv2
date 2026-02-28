@@ -58,4 +58,6 @@ See `compat-matrix.yaml` for approved upstream/ORT combinations.
 - `tools/check-public-api-exports.ps1`
 - `tools/check-android-onnxruntime-version.ps1`
 - `tools/check-ios-linkage.ps1`
+- `tools/detect-upstream-drift.ps1`
+- `tools/update-compat-matrix.ps1`
 

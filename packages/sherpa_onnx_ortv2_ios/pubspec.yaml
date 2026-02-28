@@ -6,12 +6,12 @@ description: >
 
 version: 1.12.25-ortv2.0
 
-repository: https://github.com/sherpa-onnx-ortv2/sherpa_onnx_ortv2
+repository: https://github.com/LemonCANDY42/sherpa_onnx_ortv2
 
-issue_tracker: https://github.com/sherpa-onnx-ortv2/sherpa_onnx_ortv2/issues
+issue_tracker: https://github.com/LemonCANDY42/sherpa_onnx_ortv2/issues
 documentation: https://k2-fsa.github.io/sherpa/onnx/
 
-homepage: https://github.com/sherpa-onnx-ortv2/sherpa_onnx_ortv2
+homepage: https://github.com/LemonCANDY42/sherpa_onnx_ortv2
 
 topics:
   - speech-recognition
@@ -33,3 +33,4 @@ flutter:
     platforms:
       ios:
         ffiPlugin: true
+

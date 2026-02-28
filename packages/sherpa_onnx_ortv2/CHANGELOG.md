@@ -1,3 +1,7 @@
+## 1.12.25-ortv2.0
+
+- Initial public ORTv2 fork release with provider auto-selection and CI guardrails.
+
 ## 1.12.25
 
 * Fix building without tts (#3168)
@@ -1118,3 +1122,4 @@
 ## 0.0.1
 
 * Initial release.
+
