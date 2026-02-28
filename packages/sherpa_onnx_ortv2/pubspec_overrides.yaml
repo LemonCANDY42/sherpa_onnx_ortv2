@@ -1,0 +1,5 @@
+dependency_overrides:
+  sherpa_onnx_ortv2_android:
+    path: ../sherpa_onnx_ortv2_android
+  sherpa_onnx_ortv2_ios:
+    path: ../sherpa_onnx_ortv2_ios

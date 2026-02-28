@@ -1,0 +1,17 @@
+schema_version: 1
+owner: sherpa_onnx_ortv2
+entries:
+  - sherpa_tag: "1.12.25"
+    ort_version: "1.23.2"
+    flutter_min: "3.0.0"
+    android_ndk: "29.0.14206865"
+    ios_deployment_target: "13.0"
+    status: "active"
+    notes: "Initial ORTv2 fork baseline for Android/iOS."
+  - sherpa_tag: "1.12.27"
+    ort_version: "1.23.2"
+    flutter_min: "3.0.0"
+    android_ndk: "29.0.14206865"
+    ios_deployment_target: "13.0"
+    status: "planned"
+    notes: "Next upstream sync target."

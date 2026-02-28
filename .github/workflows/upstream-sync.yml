@@ -1,0 +1,46 @@
+name: upstream-sync
+
+on:
+  workflow_dispatch:
+    inputs:
+      sherpa_version:
+        description: "sherpa_onnx version from pub.dev (e.g. 1.12.27)"
+        required: true
+        default: "1.12.27"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.38.6"
+
+      - name: Prime upstream package cache
+        run: |
+          dart pub cache add sherpa_onnx --version "${{ github.event.inputs.sherpa_version }}"
+          dart pub cache add sherpa_onnx_android --version "${{ github.event.inputs.sherpa_version }}"
+          dart pub cache add sherpa_onnx_ios --version "${{ github.event.inputs.sherpa_version }}"
+
+      - name: Sync upstream sources into fork packages
+        working-directory: packages/sherpa_onnx_ortv2
+        run: ./tools/sync-from-upstream.ps1 -SherpaVersion "${{ github.event.inputs.sherpa_version }}"
+
+      - name: Create pull request with synced sources
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: chore/upstream-sync-${{ github.event.inputs.sherpa_version }}
+          commit-message: "chore: sync upstream sherpa_onnx ${{ github.event.inputs.sherpa_version }}"
+          title: "chore: sync upstream sherpa_onnx ${{ github.event.inputs.sherpa_version }}"
+          body: |
+            Automated upstream source sync.
+
+            Manual follow-up required:
+            - Re-apply ORTv2 fork patches.
+            - Re-run verify/release workflows before publishing.

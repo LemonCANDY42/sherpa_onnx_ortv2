@@ -1,0 +1,73 @@
+name: verify
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      sherpa_tag:
+        description: "Upstream sherpa_onnx version"
+        required: true
+        default: "1.12.27"
+      ort_version:
+        description: "Target ONNX Runtime line"
+        required: true
+        default: "1.23.2"
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.38.6"
+
+      - name: Prime upstream pub cache
+        run: dart pub cache add sherpa_onnx --version "${{ github.event.inputs.sherpa_tag || '1.12.27' }}"
+
+      - name: Validate compat matrix
+        working-directory: packages/sherpa_onnx_ortv2
+        run: >
+          ./tools/assert-compat-matrix.ps1
+          -SherpaTag "${{ github.event.inputs.sherpa_tag || '1.12.27' }}"
+          -OrtVersion "${{ github.event.inputs.ort_version || '1.23.2' }}"
+
+      - name: Validate public API exports
+        working-directory: packages/sherpa_onnx_ortv2
+        run: >
+          ./tools/check-public-api-exports.ps1
+          -UpstreamVersion "${{ github.event.inputs.sherpa_tag || '1.12.27' }}"
+
+      - name: Verify Android ORT dependency line
+        run: |
+          if (-not (Select-String -Path packages/sherpa_onnx_ortv2_android/android/build.gradle -Pattern "onnxruntime-android:1.23.2")) {
+            throw "Expected onnxruntime-android:1.23.2 in Android plugin build.gradle"
+          }
+
+      - name: Flutter pub get (main)
+        working-directory: packages/sherpa_onnx_ortv2
+        run: flutter pub get
+
+      - name: Flutter pub get (android)
+        working-directory: packages/sherpa_onnx_ortv2_android
+        run: flutter pub get
+
+      - name: Flutter pub get (ios)
+        working-directory: packages/sherpa_onnx_ortv2_ios
+        run: flutter pub get
+
+      - name: Analyze main package
+        working-directory: packages/sherpa_onnx_ortv2
+        run: flutter analyze
+
+      - name: Run auto provider tests
+        working-directory: packages/sherpa_onnx_ortv2
+        run: flutter test test/auto_provider_policy_test.dart
