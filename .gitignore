@@ -6,3 +6,4 @@ build/
 **/*.iml
 coverage/
 pubspec.lock
+.native-rebuild/

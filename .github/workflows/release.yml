@@ -49,6 +49,12 @@ jobs:
           ./tool/check-public-api-exports.ps1
           -UpstreamVersion "${{ github.event.inputs.sherpa_tag }}"
 
+      - name: Android symbol version guard
+        working-directory: packages/sherpa_onnx_ortv2
+        run: >
+          ./tool/check-android-sherpa-symbol-version.ps1
+          -ExpectedOrtVersion "${{ github.event.inputs.ort_version }}"
+
       - name: Publish dry-run (android)
         working-directory: packages/sherpa_onnx_ortv2_android
         run: |

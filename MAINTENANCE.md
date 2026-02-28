@@ -19,12 +19,14 @@ Recommended remote:
 - Release check and source artifact: `.github/workflows/release.yml`
 - Upstream source sync: `.github/workflows/upstream-sync.yml`
 - Upstream drift monitor: `.github/workflows/upstream-monitor.yml`
+- Native artifact rebuild: `.github/workflows/native-rebuild.yml`
 
 ## Implemented Guardrails
 
 - Compatibility matrix: `packages/sherpa_onnx_ortv2/compat-matrix.yaml`
 - API export guard: `tool/check-public-api-exports.ps1`
 - Android ORT line guard: `tool/check-android-onnxruntime-version.ps1`
+- Android sherpa symbol guard: `tool/check-android-sherpa-symbol-version.ps1`
 - iOS linkage guard: `tool/check-ios-linkage.ps1`
 - Upstream drift detector: `tool/detect-upstream-drift.ps1`
 
@@ -39,10 +41,11 @@ Recommended remote:
 ## Continuous Maintenance Flow
 
 1. Monitor upstream drift (`upstream-monitor.yml` schedule).
-2. Run `upstream-sync.yml` to sync upstream source and auto-update compat matrix entry.
-3. Re-apply ORTv2-specific patches if upstream touched relevant files.
-4. Run verify workflow and smoke tests.
-5. Trigger release workflow after manual review.
+2. Run `upstream-sync.yml` to sync upstream source.
+3. Run `native-rebuild.yml` for the same sherpa/ORT version pair.
+4. Re-apply ORTv2-specific patches if upstream touched relevant files.
+5. Run verify workflow and smoke tests.
+6. Trigger release workflow after manual review.
 
 ## Host App Integration Checklist
 
@@ -59,8 +62,7 @@ For any upstream update (`sherpa_onnx` or `onnxruntime_v2` related):
 
 ## Known Remaining Work
 
-- Full auto rebuild of Android/iOS native binaries per upstream tag.
 - Broader device-matrix stability tests (hardware EP coverage).
-- End-to-end automated iOS ORT rebuild-level verification.
+- End-to-end runtime smoke on physical iOS/Android devices for each release candidate.
 
 

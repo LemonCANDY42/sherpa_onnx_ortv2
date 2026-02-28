@@ -25,6 +25,7 @@ focused on Android/iOS ONNX Runtime unification with `onnxruntime_v2`.
 - `.github/workflows/release.yml`
 - `.github/workflows/upstream-sync.yml`
 - `.github/workflows/upstream-monitor.yml`
+- `.github/workflows/native-rebuild.yml`
 
 ## Consume from a host app repo (submodule)
 
@@ -43,10 +44,23 @@ Then point Flutter `pubspec.yaml` path dependencies to:
 - CI verification: `verify.yml`
 - Upstream sync helper: `upstream-sync.yml`
 - Upstream drift monitor: `upstream-monitor.yml`
+- Native binary rebuild automation: `native-rebuild.yml`
 - Release check + source artifact build: `release.yml`
 - Maintenance guide: `MAINTENANCE.md`
 
 Version format:
 
 - `<upstream_version>-ortv2.<n>`
+
+## Native rebuild automation
+
+`native-rebuild.yml` is the primary workflow for rebuilding Android/iOS native artifacts from upstream `sherpa_onnx` tags while pinning ONNX Runtime to the target `onnxruntime_v2` line.
+
+- Android outputs:
+  - `packages/sherpa_onnx_ortv2_android/android/src/main/jniLibs/*/libsherpa-onnx-c-api.so`
+  - `packages/sherpa_onnx_ortv2_android/android/src/main/jniLibs/*/libsherpa-onnx-cxx-api.so`
+- iOS output:
+  - `packages/sherpa_onnx_ortv2_ios/ios/sherpa_onnx.xcframework`
+
+By default it resolves the latest upstream versions from pub.dev, rebuilds on GitHub-hosted runners, and opens a PR with the refreshed binaries and compat-matrix update.
 

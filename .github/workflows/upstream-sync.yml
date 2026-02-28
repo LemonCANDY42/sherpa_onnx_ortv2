@@ -75,7 +75,8 @@ jobs:
             - sherpa_onnx: `${{ steps.versions.outputs.sherpa_version }}`
             - onnxruntime_v2 line: `${{ steps.versions.outputs.ort_version }}`
 
-            Manual follow-up required:
+            Follow-up:
             - Re-apply ORTv2 fork patches if upstream changed related files.
+            - Trigger `native-rebuild.yml` to rebuild Android/iOS native artifacts for the same version pair.
             - Re-run verify/release workflows before publishing.
 

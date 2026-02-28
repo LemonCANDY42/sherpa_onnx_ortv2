@@ -52,6 +52,12 @@ jobs:
             throw "Expected onnxruntime-android:1.23.2 in Android plugin build.gradle"
           }
 
+      - name: Verify Android sherpa symbol version line
+        working-directory: packages/sherpa_onnx_ortv2
+        run: >
+          ./tool/check-android-sherpa-symbol-version.ps1
+          -ExpectedOrtVersion "${{ github.event.inputs.ort_version || '1.23.2' }}"
+
       - name: Flutter pub get (main)
         working-directory: packages/sherpa_onnx_ortv2
         run: flutter pub get

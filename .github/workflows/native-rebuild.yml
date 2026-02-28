@@ -1,0 +1,185 @@
+name: native-rebuild
+
+on:
+  workflow_dispatch:
+    inputs:
+      sherpa_tag:
+        description: "Upstream sherpa_onnx version (e.g. 1.12.27 or v1.12.27)"
+        required: false
+        default: ""
+      ort_version:
+        description: "onnxruntime_v2 version line (e.g. 1.23.2)"
+        required: false
+        default: ""
+  schedule:
+    - cron: "45 3 * * 1"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  resolve_versions:
+    runs-on: ubuntu-latest
+    outputs:
+      sherpa_tag: ${{ steps.resolve.outputs.sherpa_tag }}
+      sherpa_git_tag: ${{ steps.resolve.outputs.sherpa_git_tag }}
+      ort_version: ${{ steps.resolve.outputs.ort_version }}
+      branch_suffix: ${{ steps.resolve.outputs.branch_suffix }}
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - id: resolve
+        run: |
+          $sherpaInput = "${{ github.event.inputs.sherpa_tag }}"
+          if ([string]::IsNullOrWhiteSpace($sherpaInput)) {
+            $sherpaInput = (Invoke-RestMethod -Uri "https://pub.dev/api/packages/sherpa_onnx").latest.version
+          }
+          $sherpaInput = $sherpaInput.Trim()
+          if ($sherpaInput.StartsWith("v")) {
+            $sherpaTag = $sherpaInput.Substring(1)
+          } else {
+            $sherpaTag = $sherpaInput
+          }
+
+          $ortInput = "${{ github.event.inputs.ort_version }}"
+          if ([string]::IsNullOrWhiteSpace($ortInput)) {
+            $latestOrtWithBuild = (Invoke-RestMethod -Uri "https://pub.dev/api/packages/onnxruntime_v2").latest.version
+            $ortInput = ($latestOrtWithBuild -split "\+")[0]
+          }
+          $ortInput = $ortInput.Trim()
+
+          $branchSuffix = "sherpa-$sherpaTag-ort-$ortInput"
+
+          "sherpa_tag=$sherpaTag" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          "sherpa_git_tag=v$sherpaTag" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          "ort_version=$ortInput" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          "branch_suffix=$branchSuffix" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+  rebuild_android:
+    needs: resolve_versions
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android NDK
+        run: |
+          yes | sdkmanager --licenses >/dev/null
+          sdkmanager "ndk;29.0.14206865"
+          echo "ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/29.0.14206865" >> "$GITHUB_ENV"
+
+      - name: Rebuild Android native binaries
+        run: |
+          chmod +x packages/sherpa_onnx_ortv2/tool/rebuild-android-native.sh
+          packages/sherpa_onnx_ortv2/tool/rebuild-android-native.sh \
+            "${{ needs.resolve_versions.outputs.sherpa_git_tag }}" \
+            "${{ needs.resolve_versions.outputs.ort_version }}" \
+            "$GITHUB_WORKSPACE"
+
+      - name: Upload Android JNI libs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-jniLibs
+          path: packages/sherpa_onnx_ortv2_android/android/src/main/jniLibs
+
+  rebuild_ios:
+    needs: resolve_versions
+    runs-on: macos-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Rebuild iOS xcframework
+        run: |
+          chmod +x packages/sherpa_onnx_ortv2/tool/rebuild-ios-native.sh
+          packages/sherpa_onnx_ortv2/tool/rebuild-ios-native.sh \
+            "${{ needs.resolve_versions.outputs.sherpa_git_tag }}" \
+            "${{ needs.resolve_versions.outputs.ort_version }}" \
+            "$GITHUB_WORKSPACE"
+
+      - name: Upload iOS xcframework artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-xcframework
+          path: packages/sherpa_onnx_ortv2_ios/ios/sherpa_onnx.xcframework
+
+  open_pr:
+    needs: [resolve_versions, rebuild_android, rebuild_ios]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Android artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: android-jniLibs
+          path: artifacts/android
+
+      - name: Download iOS artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ios-xcframework
+          path: artifacts/ios
+
+      - name: Apply rebuilt artifacts
+        run: |
+          $androidDst = "packages/sherpa_onnx_ortv2_android/android/src/main/jniLibs"
+          $iosDst = "packages/sherpa_onnx_ortv2_ios/ios/sherpa_onnx.xcframework"
+          $androidSrc = "artifacts/android/jniLibs"
+          $iosSrc = "artifacts/ios/sherpa_onnx.xcframework"
+
+          if (-not (Test-Path $androidSrc)) { throw "Missing Android artifact at $androidSrc" }
+          if (-not (Test-Path $iosSrc)) { throw "Missing iOS artifact at $iosSrc" }
+
+          Remove-Item -Recurse -Force $androidDst
+          Copy-Item -Recurse -Force $androidSrc $androidDst
+
+          Remove-Item -Recurse -Force $iosDst
+          Copy-Item -Recurse -Force $iosSrc $iosDst
+
+      - name: Update compat matrix entry
+        working-directory: packages/sherpa_onnx_ortv2
+        run: >
+          ./tool/update-compat-matrix.ps1
+          -SherpaTag "${{ needs.resolve_versions.outputs.sherpa_tag }}"
+          -OrtVersion "${{ needs.resolve_versions.outputs.ort_version }}"
+          -Status "active"
+
+      - name: Verify Android symbol version alignment
+        working-directory: packages/sherpa_onnx_ortv2
+        run: >
+          ./tool/check-android-sherpa-symbol-version.ps1
+          -ExpectedOrtVersion "${{ needs.resolve_versions.outputs.ort_version }}"
+
+      - name: Create pull request with rebuilt native artifacts
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: chore/native-rebuild-${{ needs.resolve_versions.outputs.branch_suffix }}
+          commit-message: "chore: rebuild native artifacts for sherpa_onnx ${{ needs.resolve_versions.outputs.sherpa_tag }} / ORT ${{ needs.resolve_versions.outputs.ort_version }}"
+          title: "chore: rebuild native artifacts (sherpa ${{ needs.resolve_versions.outputs.sherpa_tag }}, ORT ${{ needs.resolve_versions.outputs.ort_version }})"
+          body: |
+            Automated native artifact rebuild.
+
+            Inputs:
+            - sherpa_onnx: `${{ needs.resolve_versions.outputs.sherpa_tag }}`
+            - onnxruntime_v2 line: `${{ needs.resolve_versions.outputs.ort_version }}`
+
+            Outputs:
+            - Android: refreshed `jniLibs/*/libsherpa-onnx-{c,cxx}-api.so`
+            - iOS: refreshed `sherpa_onnx.xcframework`
+
+            Validation:
+            - Updated compat matrix entry
+            - Android symbol token guard (`VERS_${{ needs.resolve_versions.outputs.ort_version }}`)
