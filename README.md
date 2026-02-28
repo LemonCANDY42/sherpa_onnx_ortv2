@@ -17,17 +17,20 @@ This directory is the standalone repository layout for the public `sherpa_onnx_o
 - `.github/workflows/release.yml`
 - `.github/workflows/upstream-sync.yml`
 
-## Consume from SaySee (submodule)
+## Consume from a host app repo (submodule)
 
-In the SaySee repo root:
+In your host repo root:
 
 ```bash
-git submodule add <PUBLIC_REPO_URL> app/saysee_client/submodules/sherpa_onnx_ortv2_repo
+git submodule add <PUBLIC_REPO_URL> <your-submodule-path>
 git submodule update --init --recursive
 ```
 
-SaySee `pubspec.yaml` should reference paths under:
-`submodules/sherpa_onnx_ortv2_repo/packages/...`
+Then point Flutter `pubspec.yaml` path dependencies to:
+`<your-submodule-path>/packages/...`
+
+Example (SaySee):
+`app/saysee_client/submodules/sherpa_onnx_ortv2_repo/packages/...`
 
 ## Release model
 

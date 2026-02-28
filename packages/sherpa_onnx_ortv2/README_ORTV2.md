@@ -5,8 +5,7 @@ Functional fork of `sherpa_onnx` for Android/iOS compatibility with `onnxruntime
 ## Repo mode
 
 - Maintained as a standalone public repository.
-- Consumed by SaySee through Git submodule:
-  `app/saysee_client/submodules/sherpa_onnx_ortv2_repo`.
+- Can be consumed by host app repositories through Git submodule.
 - Build/release is handled in the standalone repo GitHub Workflows.
 
 ## What is added
