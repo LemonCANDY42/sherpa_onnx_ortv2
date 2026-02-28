@@ -1,6 +1,7 @@
 ## 1.12.27-ortv2.0
 
 - Bumped iOS plugin version/podspec to align with upstream `sherpa_onnx` `1.12.27`.
+- Synced `sherpa_onnx.xcframework` prebuilt binaries from upstream `sherpa_onnx_ios` `1.12.27`.
 - Kept iOS package line consistent with the ORTv2 fork release cadence.
 
 ## 1.12.25-ortv2.0

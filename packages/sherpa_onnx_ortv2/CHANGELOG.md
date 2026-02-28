@@ -1,6 +1,7 @@
 ## 1.12.27-ortv2.0
 
 - Rebased compatibility target to upstream `sherpa_onnx` `1.12.27`.
+- Synced Android JNI libs and iOS xcframework binaries to upstream `1.12.27`.
 - Added PocketTTS `voiceEmbeddingCacheCapacity` support in Dart/FFI config.
 - Updated release-check defaults and compatibility matrix to `1.12.27`.
 

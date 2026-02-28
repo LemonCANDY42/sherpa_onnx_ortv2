@@ -1,6 +1,7 @@
 ## 1.12.27-ortv2.0
 
 - Bumped Android plugin version to align with upstream `sherpa_onnx` `1.12.27`.
+- Synced `jniLibs` prebuilt binaries from upstream `sherpa_onnx_android` `1.12.27`.
 - Kept ONNX Runtime dependency line aligned with `onnxruntime_v2` strategy.
 
 ## 1.12.25-ortv2.0
