@@ -1,5 +1,6 @@
 // Copyright (c) 2026 sherpa_onnx_ortv2 contributors
 import 'dart:convert';
+import 'dart:developer' as developer;
 import 'dart:io';
 
 import 'package:onnxruntime_v2/onnxruntime_v2.dart' as ort;
@@ -205,5 +206,8 @@ void _emitDiagnostics(
     'fallback_reason': resolution.fallbackReason,
     'probe_error': probeError,
   };
-  print('[sherpa_onnx_ortv2][provider] ${jsonEncode(payload)}');
+  developer.log(
+    jsonEncode(payload),
+    name: 'sherpa_onnx_ortv2.provider',
+  );
 }
