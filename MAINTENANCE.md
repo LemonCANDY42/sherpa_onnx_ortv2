@@ -30,6 +30,9 @@ Recommended remote:
 - iOS linkage guard: `tool/check-ios-linkage.ps1`
 - Upstream drift detector: `tool/detect-upstream-drift.ps1`
 - Native toolchain preflight: `tool/check-native-toolchain.sh`
+- FFI layout alignment guard (manual review required on each upstream tag):
+  - Diff `packages/sherpa_onnx_ortv2/lib/src/*_bindings.dart` structs against upstream `sherpa-onnx/c-api/c-api.h`.
+  - Diff `packages/sherpa_onnx_ortv2/lib/src/*.dart` config converters/free logic against upstream `sherpa_onnx` Dart package for newly added fields.
 - Native toolchain bootstrap:
   - `tool/provision-toolchain-ubuntu.sh`
   - `tool/provision-toolchain-macos.sh`
@@ -64,6 +67,13 @@ For any upstream update (`sherpa_onnx` or `onnxruntime_v2` related):
    - `flutter pub get`
    - `flutter analyze`
    - policy/config tests from `packages/sherpa_onnx_ortv2/test/`
+   - host app debug build (`flutter build apk --debug` for Android)
+
+## Troubleshooting Notes
+
+- Crash signature: `SIGSEGV` in `SherpaOnnxCreateOfflineRecognizer` with libc `strlen` on an invalid address (for example `0x3f800000`).
+  - Typical root cause: Dart FFI struct layout mismatch with native `c-api.h` after upstream added/reordered fields.
+  - Action: sync bindings and config convert/free paths to upstream tag before rebuilding native artifacts.
 
 ## Known Remaining Work
 
