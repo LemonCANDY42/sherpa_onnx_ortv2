@@ -38,6 +38,12 @@ git submodule update --init --recursive
 
 Then point Flutter `pubspec.yaml` path dependencies to:
 `<your-submodule-path>/packages/...`
+For example:
+`submodules/sherpa_onnx_ortv2_repo/packages/sherpa_onnx_ortv2`
+
+For step-by-step host integration (copy-paste commands, runtime verification,
+and troubleshooting), see:
+`packages/sherpa_onnx_ortv2/README_ORTV2.md`
 
 ## Release model
 
